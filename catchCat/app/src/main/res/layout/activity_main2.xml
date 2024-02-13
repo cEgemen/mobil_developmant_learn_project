@@ -6,75 +6,83 @@
     android:layout_height="match_parent"
     android:layout_x="200dp"
     android:layout_y="300dp"
+    android:background="#9269DA"
     tools:context=".MainActivity2">
-
-    <ImageButton
-        android:id="@+id/runCatImageView"
-        android:layout_width="152dp"
-        android:layout_height="128dp"
-        android:onClick="caught"
-
-        app:layout_column="1"
-        app:layout_constraintBottom_toTopOf="@+id/linearLayout2"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/linearLayout"
-        app:layout_constraintVertical_bias="0.0"
-        app:layout_row="2"
-        app:srcCompat="@drawable/cat" />
 
     <LinearLayout
         android:id="@+id/linearLayout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="120px"
         android:layout_marginTop="2dp"
+        android:background="#FDFCFC"
         android:gravity="center"
         android:orientation="horizontal"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
-        <Button
-            android:id="@+id/pauseButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginRight="50dp"
-            android:onClick="pause"
-            android:text="PAUSE" />
-
-        <Button
-            android:id="@+id/resetButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginRight="45dp"
-            android:onClick="reset"
-            android:text="RESET" />
-
         <TextView
             android:id="@+id/timeTextView"
-            android:layout_width="100dp"
+            android:layout_width="118dp"
             android:layout_height="50dp"
+            android:background="#FFFFFF"
             android:gravity="center"
-            android:textStyle="bold"
-            android:text="TIME : 10" />
+            android:text="TIME : 10"
+            android:textSize="22sp"
+            android:textStyle="bold" />
+
     </LinearLayout>
 
     <LinearLayout
         android:id="@+id/linearLayout2"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="120px"
+        android:background="#FFFFFF"
         android:orientation="horizontal"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent">
+
+        <Button
+            android:id="@+id/resetButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="45dp"
+            android:backgroundTint="#FF9800"
+            android:onClick="reset"
+            android:text="RESET"
+            android:textColor="#131212" />
 
         <TextView
             android:id="@+id/skorTextView"
             android:layout_width="100dp"
             android:layout_height="50dp"
             android:layout_weight="1"
+            android:background="#FFFFFF"
             android:gravity="center"
             android:text="SKOR : 0"
+            android:textSize="22sp"
             android:textStyle="bold" />
+
+        <Button
+            android:id="@+id/pauseButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="45dp"
+            android:layout_marginRight="5dp"
+            android:backgroundTint="#CDDC39"
+            android:onClick="pause"
+            android:text="PAUSE"
+            android:textColor="#1B1A1A" />
+
     </LinearLayout>
+
+    <ImageView
+        android:id="@+id/runCatImageView"
+        android:layout_width="300px"
+        android:layout_height="300px"
+        android:onClick="caught"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/linearLayout"
+        app:srcCompat="@drawable/cat" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

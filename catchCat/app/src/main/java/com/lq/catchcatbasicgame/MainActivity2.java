@@ -2,6 +2,9 @@ package com.lq.catchcatbasicgame;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Handler;
@@ -15,6 +18,7 @@ public class MainActivity2 extends AppCompatActivity {
     Runnable runnnable;
    Handler handler;
     CountDownTimer sayac;
+    AlertDialog.Builder alert ;
    boolean isPause = false;
    boolean isReset = false;
     TextView timebord ;
@@ -29,6 +33,7 @@ public class MainActivity2 extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main2);
         handler = new Handler();
+        alert =  new  AlertDialog.Builder(MainActivity2.this);
         timebord = findViewById(R.id.timeTextView);
         timebord.setText(timeboardText+time);
         skorboard = findViewById(R.id.skorTextView);
@@ -42,7 +47,25 @@ public class MainActivity2 extends AppCompatActivity {
             }
             @Override
             public void onFinish() {
+                handler.removeCallbacks(runnnable);
+                alert.setMessage("Bastan Baslamak İster Misin ? ");
+                alert.setTitle("Süre : "+time+ "                        Skor : "+skor);
+                alert.setPositiveButton("EVET",new DialogInterface.OnClickListener(){
 
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        start();
+                    }
+                });
+                alert.setNegativeButton("HAYIR",new DialogInterface.OnClickListener(){
+
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        Intent intent =new Intent(MainActivity2.this,MainActivity.class);
+                        startActivity(intent);
+                    }
+                });
+                alert.show();
             }
         }.start();
         generateKordinat();
@@ -59,6 +82,7 @@ public class MainActivity2 extends AppCompatActivity {
      if (!isPause) {
 
          isPause = !isPause;
+         sayac.cancel();
          handler.removeCallbacks(runnnable);
          return;
      }
@@ -75,6 +99,24 @@ public class MainActivity2 extends AppCompatActivity {
          sayac.cancel();
          skorboard.setText(skorboardText+0);
          timebord.setText(timeboardText+0);
+         alert.setMessage("Bastan Baslamak İster Misin ? ");
+         alert.setTitle("Süre : "+time+ "                           Skor : "+skor);
+         alert.setPositiveButton("EVET",new DialogInterface.OnClickListener(){
+
+             @Override
+             public void onClick(DialogInterface dialogInterface, int i) {
+                 start();
+             }
+         });
+         alert.setNegativeButton("HAYIR",new DialogInterface.OnClickListener(){
+
+             @Override
+             public void onClick(DialogInterface dialogInterface, int i) {
+                 Intent intent =new Intent(MainActivity2.this,MainActivity.class);
+                 startActivity(intent);
+             }
+         });
+         alert.show();
      }
 
    }
@@ -84,16 +126,26 @@ public class MainActivity2 extends AppCompatActivity {
         runnnable = new Runnable() {
             @Override
             public void run() {
-                float x = new Random().nextInt(600)+1;
-                float y = new Random().nextInt(1200)+1;
+                float x = new Random().nextInt(770);
+                float y = new Random().nextInt(1520)+120;
                 cat.setTranslationX(x);
                 cat.setTranslationY(y);
-             handler.postDelayed(runnnable,200);
+             handler.postDelayed(runnnable,500);
             }
         };
         handler.post(runnnable);
-
-
    }
+
+    public void start()
+    {
+         time = 10;
+         skor = 0;
+         isPause = false;
+         isReset = false;
+         skorboard.setText(skorboardText+skor);
+         timebord.setText(timeboardText+time);
+         sayac.start();
+         handler.post(runnnable);
+    }
 
 }
