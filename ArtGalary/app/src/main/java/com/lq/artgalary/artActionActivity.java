@@ -36,7 +36,7 @@ public class artActionActivity extends AppCompatActivity {
     ActivityResultLauncher<Intent> galaryLauncher;
     ActivityResultLauncher<String> permisionLauncher;
     ActivityArtActionBinding binding;
-    ByteArrayOutputStream   outputArray;
+    ByteArrayOutputStream   outputArray = new ByteArrayOutputStream();
     Bitmap selectedImage;
     SQLiteDatabase db;
 
@@ -48,8 +48,7 @@ public class artActionActivity extends AppCompatActivity {
         registerLauncher();
         try {
             db = this.openOrCreateDatabase("Arts", MODE_PRIVATE, null);
-            db.execSQL("CREATE TABLE IF NOT EXISTS arts (id INTEGER PRIMARY KEY , name VARCHAR , artist VARCHAR,year VARCHAR,image BLOB)");
-
+            db.execSQL("CREATE TABLE IF NOT EXISTS arts (id INTEGER PRIMARY KEY,name VARCHAR,artist VARCHAR,year VARCHAR,image BLOB)");
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -65,22 +64,35 @@ public class artActionActivity extends AppCompatActivity {
             binding.saveButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    SQLiteStatement state = db.compileStatement("INSERT INTO arts (name,artist,year,image) VALUES (?,?,?,?)");
-                    state.bindString(1, binding.nameTextView.getText().toString());
-                    state.bindString(2, binding.artistTextView.getText().toString());
-                    state.bindString(3, binding.yearTextView.getText().toString());
-                    selectedImage = createSmallestBitmap(selectedImage,300);
-                    selectedImage.compress(Bitmap.CompressFormat.PNG,80,outputArray);
-                    state.bindBlob(4,outputArray.toByteArray());
-                    state.execute();
-                    setIntent();
+
+                  try{
+                      String sqlQuery = "INSERT INTO arts (name,artist,year,image) VALUES(?,?,?,?)";
+                      String artName = binding.nameTextView.getText().toString();
+                      String artistName = binding.artistTextView.getText().toString();
+                      String artYear = binding.yearTextView.getText().toString();
+                      selectedImage.compress(Bitmap.CompressFormat.PNG,80,outputArray);
+                      byte [] bytArray = outputArray.toByteArray();
+                      SQLiteStatement statement = db.compileStatement(sqlQuery);
+                      statement.bindString(1,artName);
+                      statement.bindString(2,artistName);
+                      statement.bindString(3,artYear);
+                      statement.bindBlob(4,bytArray);
+                      statement.execute();
+                      setIntent();
+                  }
+                  catch (Exception e)
+                  {
+                      System.out.println("errrrrrrrrrroooooooooorrrrrrrrrr");
+                  }
+
                 }
             });
         } else {
              Intent intent = getIntent();
-             int id = intent.getIntExtra("id",0);
+             int idValue = intent.getIntExtra("id",0);
             try {
-                  Cursor cursor = db.rawQuery("SELECT * FROM arts WHERE id=?",new String[]{""+id});
+                  String query = "SELECT * FROM arts WHERE id ="+idValue;
+                  Cursor cursor = db.rawQuery(query,null);
                   int nameIndex = cursor.getColumnIndex("name");
                   int artistIndex = cursor.getColumnIndex("artist");
                   int yearIndex = cursor.getColumnIndex("year");
@@ -88,11 +100,15 @@ public class artActionActivity extends AppCompatActivity {
                   while(cursor.moveToNext())
                   {
                       binding.nameTextView.setText(cursor.getString(nameIndex));
+                      binding.nameTextView.setEnabled(false);
                       binding.artistTextView.setText(cursor.getString(artistIndex));
+                      binding.artistTextView.setEnabled(false);
                       binding.yearTextView.setText(cursor.getString(yearIndex));
+                      binding.yearTextView.setEnabled(false);
                       byte [] byteArray = cursor.getBlob(imageIndex);
                       Bitmap select = BitmapFactory.decodeByteArray(byteArray,0,byteArray.length);
                       binding.artImageView.setImageBitmap(select);
+                      binding.artImageView.setEnabled(false);
                   }
             }
             catch (Exception e)
@@ -183,24 +199,5 @@ public class artActionActivity extends AppCompatActivity {
             }
         });
     }
-
-   public Bitmap createSmallestBitmap(Bitmap image,int maxSizes)
-   {
-       int witdh = image.getWidth();
-       int height = image.getHeight();
-       float oran = witdh / (float) height;
-       if(oran >= 1)
-       {
-           witdh = maxSizes;
-           height = (int) Math.floor( witdh  / oran);
-       }
-       else{
-           height = maxSizes;
-           witdh = (int) Math.floor( height * oran);
-       }
-       image.setWidth(witdh);
-       image.setHeight(height);
-       return image;
-   }
 
 }

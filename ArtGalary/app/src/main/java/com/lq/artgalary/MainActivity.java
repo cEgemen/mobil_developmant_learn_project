@@ -29,11 +29,10 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
-          fetchData();
+        fetchData();
         adapter = new RecyclerViewAdapter(arts);
         binding.recyclerView.setLayoutManager(new LinearLayoutManager(this));
         binding.recyclerView.setAdapter(adapter);
-
     }
 
     @Override
@@ -58,9 +57,11 @@ public class MainActivity extends AppCompatActivity {
            db.execSQL("CREATE TABLE IF NOT EXISTS arts (id INTEGER PRIMARY KEY,name VARCHAR" +
                    ",artist VARCHAR,year VARCHAR,image BLOB)");
            Cursor cursor = db.rawQuery("SELECT * FROM arts",null);
+           int idIndex = cursor.getColumnIndex("id");
+           int nameIndex = cursor.getColumnIndex("name");
            while(cursor.moveToNext())
            {
-                arts.add(new ArtModel(cursor.getString(1),123));
+                arts.add(new ArtModel(cursor.getString(nameIndex),cursor.getInt(idIndex)));
            }
            cursor.close();
            System.out.println("arts.size() => "+arts.size());
