@@ -18,7 +18,7 @@ public class FavoriLocation implements Serializable {
     @ColumnInfo(name = "longitude")
   public  double longitude;
 
-   FavoriLocation(String locationName, double longitude, double latitude)
+   public FavoriLocation(String locationName, double longitude, double latitude)
    {
        this.locationName = locationName;
        this.longitude = longitude;

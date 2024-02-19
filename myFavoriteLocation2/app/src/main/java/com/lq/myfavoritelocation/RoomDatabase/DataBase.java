@@ -1,5 +1,6 @@
 package com.lq.myfavoritelocation.RoomDatabase;
 
+import androidx.room.rxjava3.RxRoom;
 import androidx.room.Database;
 import androidx.room.RoomDatabase;
 

@@ -34,7 +34,7 @@ import java.util.ArrayList;
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(holder.itemView.getContext(), MainActivity.class);
+                Intent intent = new Intent(holder.itemView.getContext(), MapsActivity.class);
                 intent.putExtra("type","oldLocation");
                 intent.putExtra("selectedLocation",items.get(index));
                 holder.itemView.getContext().startActivity(intent);
@@ -44,6 +44,8 @@ import java.util.ArrayList;
 
     @Override
     public int getItemCount() {
+
+        System.out.println("item.size() => "+items.size());
         return items.size();
     }
 }

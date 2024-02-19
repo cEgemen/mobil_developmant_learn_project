@@ -32,20 +32,25 @@ import com.lq.myfavoritelocation.RoomDatabase.FavoriLocation;
 import com.lq.myfavoritelocation.RoomDatabase.LocationDAO;
 import com.lq.myfavoritelocation.databinding.ActivityMapsBinding;
 
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
+import io.reactivex.rxjava3.core.Scheduler;
+import io.reactivex.rxjava3.disposables.CompositeDisposable;
+import io.reactivex.rxjava3.schedulers.Schedulers;
+
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, GoogleMap.OnMapLongClickListener {
     ActivityResultLauncher<String> permissionLauncher;
     private GoogleMap mMap;
     private ActivityMapsBinding binding;
     LocationManager manager;
     Location location;
-
+    LatLng lastLatLng;
     DataBase db;
     LocationDAO dao;
-
+    CompositeDisposable disposables = new CompositeDisposable();
+    FavoriLocation selectedLocation;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         binding = ActivityMapsBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
         setLayout();
@@ -54,7 +59,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
-        db =  Room.databaseBuilder(getApplicationContext(), DataBase.class,"Location").build();
+        db =  Room.databaseBuilder(getApplicationContext(), DataBase.class,"FavoriLocation").build();
         dao = db.locationDAO();
     }
 
@@ -82,13 +87,24 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         else{
             manager =(LocationManager) getSystemService(Context.LOCATION_SERVICE);
 
-            location = manager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-            if(location != null)
-            {
-                LatLng latLng = new LatLng(location.getLatitude(),location.getLongitude());
-                mMap.addMarker(new MarkerOptions().position(latLng).title("My Last Known Location"));
-                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng,15));
-            }
+           if(getIntent().getStringExtra("type").equals("oldLocation"))
+           {
+               FavoriLocation selectLocation =(FavoriLocation) getIntent().getSerializableExtra("selectedLocation");
+               lastLatLng = new LatLng(selectLocation.latitude,selectLocation.longitude);
+               mMap.addMarker(new MarkerOptions().position(lastLatLng).title(selectLocation.locationName));
+               mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(lastLatLng,15));
+           }
+           else
+           {
+               location = manager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+               if(location != null)
+               {
+                   LatLng latLng = new LatLng(location.getLatitude(),location.getLongitude());
+                   mMap.addMarker(new MarkerOptions().position(latLng).title("My Last Known Location"));
+                   mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng,15));
+               }
+           }
+
             manager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, new LocationListener() {
                 @Override
                 public void onLocationChanged(@NonNull Location location) {
@@ -107,10 +123,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             binding.deleteButton.setVisibility(View.GONE);
         }
         else{
-            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
-                FavoriLocation selectedLocation = intent.getSerializableExtra("selectedLocation", FavoriLocation.class);
-                binding.locationNameTextView.setText(selectedLocation.locationName);
-            }
+            selectedLocation =(FavoriLocation)intent.getSerializableExtra("selectedLocation");
+            System.out.print("selectedLocation.name => "+selectedLocation.locationName);
+            binding.locationNameTextView.setText(selectedLocation.locationName);
             binding.addButton.setVisibility(View.GONE);
             binding.locationNameTextView.setEnabled(false);
         }
@@ -118,12 +133,19 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     public void add(View view)
     {
-
+        this.disposables.add(dao.insert(new FavoriLocation(binding.locationNameTextView.getText().toString(), lastLatLng.longitude, lastLatLng.latitude)).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(this::onCompleted));
     }
 
     public void delete(View view)
     {
+         this.disposables.add(dao.delete(selectedLocation).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(this::onCompleted));
+    }
 
+    public void onCompleted()
+    {
+         Intent intent = new Intent(MapsActivity.this,MainActivity.class);
+         startActivity(intent);
+         finish();
     }
 
     public void registerLauncher()
@@ -165,5 +187,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mMap.clear();
         mMap.addMarker(new MarkerOptions().position(latLng));
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng,15));
+        lastLatLng = latLng;
     }
 }
