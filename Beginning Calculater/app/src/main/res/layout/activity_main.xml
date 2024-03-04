@@ -49,39 +49,36 @@
         android:id="@+id/addButton"
         android:layout_width="100dp"
         android:layout_height="100dp"
-        android:layout_marginStart="76dp"
-        android:layout_marginTop="30dp"
+        android:layout_marginTop="56dp"
         android:onClick="add"
         android:text="+"
-        android:textSize="20sp"
-        app:layout_constraintStart_toStartOf="parent"
+        android:textSize="24sp"
+        app:layout_constraintStart_toStartOf="@+id/resultTextView"
         app:layout_constraintTop_toBottomOf="@+id/resultTextView" />
 
     <Button
         android:id="@+id/substractionButton"
         android:layout_width="103dp"
         android:layout_height="99dp"
-        android:layout_marginTop="30dp"
-        android:layout_marginEnd="60dp"
+        android:layout_marginTop="28dp"
         android:onClick="substraction"
         android:text="-"
-        android:textSize="20sp"
-        app:layout_constraintEnd_toEndOf="parent"
+        android:textSize="24sp"
+        app:layout_constraintBottom_toBottomOf="@+id/addButton"
+        app:layout_constraintEnd_toEndOf="@+id/resultTextView"
         app:layout_constraintTop_toBottomOf="@+id/resultTextView" />
 
     <Button
         android:id="@+id/divideButton"
         android:layout_width="100dp"
         android:layout_height="100dp"
-        android:layout_marginStart="68dp"
         android:layout_marginTop="10dp"
         android:onClick="divide"
         android:text="/"
-        android:textSize="20sp"
+        android:textSize="24sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="@+id/addButton"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/addButton"
         app:layout_constraintTop_toBottomOf="@+id/addButton"
         app:layout_constraintVertical_bias="0.791" />
 
@@ -90,13 +87,10 @@
         android:layout_width="100dp"
         android:layout_height="100dp"
         android:layout_marginTop="10dp"
-        android:layout_marginEnd="56dp"
         android:onClick="multiplication"
         android:text="*"
-        android:textSize="20sp"
+        android:textSize="24sp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.3"
         app:layout_constraintStart_toStartOf="@+id/substractionButton"
         app:layout_constraintTop_toBottomOf="@+id/substractionButton"
         app:layout_constraintVertical_bias="0.787" />
@@ -113,4 +107,15 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/num2EditTextView" />
+
+    <Button
+        android:id="@+id/modButton"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:text="%"
+        android:textSize="24sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/multiplicationButton"
+        app:layout_constraintStart_toEndOf="@+id/addButton"
+        app:layout_constraintTop_toBottomOf="@+id/resultTextView" />
 </androidx.constraintlayout.widget.ConstraintLayout>

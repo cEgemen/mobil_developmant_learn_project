@@ -16,6 +16,27 @@ class MainActivity : AppCompatActivity() {
         binding.resultTextView.text = "RESULT : 0.0";
         binding.num1EditTextView.setText("0");
         binding.num2EditTextView.setText("0");
+
+        binding.modButton.setOnClickListener(object : View.OnClickListener{
+            override fun onClick(p0: View?) {
+                val res : Boolean =  checkNums();
+                if(res)
+                {
+                    val num1 : Double = binding.num1EditTextView.text.toString().toDouble();
+                    val num2 : Double = binding.num2EditTextView.text.toString().toDouble();
+                    val result :Double = calculate.calculater("%",num1,num2);
+                    binding.resultTextView.text = "RESULT : $result"
+                }
+                else{
+                    binding.resultTextView.text = "Girdiginiz Deger ya da Degerler Uygun Degildir!!!";
+
+                }
+
+            }
+
+
+        })
+
     }
 
     fun add(view : View)
