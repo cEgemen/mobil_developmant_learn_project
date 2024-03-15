@@ -1,24 +1,43 @@
 package com.lq.favoriteartswithkotlin
 
+import android.Manifest
+import android.app.Activity
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteStatement
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.graphics.ImageDecoder
+import android.os.Build.VERSION
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.provider.MediaStore
+import android.view.View
+import android.widget.Toast
+import androidx.activity.result.ActivityResultCallback
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContract
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
+import com.google.android.material.snackbar.Snackbar
 import com.lq.favoriteartswithkotlin.databinding.ActivityArtDetailAcrivityBinding
 import java.io.ByteArrayOutputStream
 
 class ArtDetailAcrivity : AppCompatActivity() {
      lateinit var  binding : ActivityArtDetailAcrivityBinding;
+     lateinit var  permissionLaunch : ActivityResultLauncher<String> ;
+      lateinit var  activityLaunch : ActivityResultLauncher<Intent> ;
      lateinit var type : String;
      lateinit var  db :SQLiteDatabase;
+     var artImage : Bitmap? =null;
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityArtDetailAcrivityBinding.inflate((layoutInflater));
         db = this.openOrCreateDatabase("Arts", MODE_PRIVATE,null);
         setContentView(binding.root);
+        regesterLauncher();
         type = intent.getStringExtra("type")!!;
         setView(type);
     }
@@ -35,8 +54,7 @@ class ArtDetailAcrivity : AppCompatActivity() {
                   statement.bindString(1,binding.artNamEditTextText.text.toString());
                   statement.bindString(2,binding.artistNamEditTextText.text.toString());
                   statement.bindString(3,binding.artYearEditTextText.text.toString());
-
-                  val smallImg =  buildSmallImg(imgBit,300);
+                  val smallImg =  buildSmallImg(artImage!!,300);
                   val outputArray = ByteArrayOutputStream();
                   smallImg.compress(Bitmap.CompressFormat.PNG,100,outputArray);
                   statement.bindBlob(4,outputArray.toByteArray());
@@ -45,6 +63,27 @@ class ArtDetailAcrivity : AppCompatActivity() {
                   val intent = Intent(this@ArtDetailAcrivity,MainActivity::class.java);
                   startActivity(intent);
                   finish()
+              }
+              binding.artImageView.setImageResource(R.drawable.ic_launcher_foreground)
+              binding.artImageView.setOnClickListener {
+                       if(ContextCompat.checkSelfPermission(this@ArtDetailAcrivity,Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED)
+                       {
+                            if(ActivityCompat.shouldShowRequestPermissionRationale(this@ArtDetailAcrivity,Manifest.permission.READ_EXTERNAL_STORAGE))
+                            {
+                              Snackbar.make(it,"IF YOU SELECYT IMG YOU MUST ALLOW PERMISSION",Snackbar.LENGTH_INDEFINITE).setAction("ALLOW PERMISION",
+                                  View.OnClickListener { view ->
+                                                 permissionLaunch.launch(Manifest.permission.READ_EXTERNAL_STORAGE);
+                                  }).show()
+                            }
+                           else{
+                                permissionLaunch.launch(Manifest.permission.READ_EXTERNAL_STORAGE);
+                            }
+
+                       }
+                      else{
+                          val intent : Intent =  Intent(Intent.ACTION_PICK,MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                           activityLaunch.launch(intent)
+                       }
               }
 
           }
@@ -81,6 +120,41 @@ class ArtDetailAcrivity : AppCompatActivity() {
 
 
           }
+    }
+
+    fun regesterLauncher (){
+         activityLaunch = registerForActivityResult(ActivityResultContracts.StartActivityForResult(),
+             ActivityResultCallback {result ->
+                             if(result.resultCode == RESULT_OK)
+                             {
+                                   val resultIntent = result.data;
+                                   if(resultIntent != null)
+                                   {
+                                         val resultResultIntent = resultIntent.data;
+                                         if(resultResultIntent != null)
+                                         {
+                                             artImage = if(VERSION.SDK_INT >= 28) {
+                                                 val source = ImageDecoder.createSource(this@ArtDetailAcrivity.contentResolver,resultResultIntent);
+                                                 ImageDecoder.decodeBitmap(source);
+                                             } else{
+                                                 MediaStore.Images.Media.getBitmap(this@ArtDetailAcrivity.contentResolver,resultResultIntent);
+                                             }
+                                             binding.artImageView.setImageBitmap(artImage);
+                                         }
+                                   }
+                             }
+             });
+
+         permissionLaunch = registerForActivityResult(ActivityResultContracts.RequestPermission()){result->
+                      if(result)
+                      {
+                          val intent : Intent = Intent(Intent.ACTION_PICK,MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                          activityLaunch.launch(intent);
+                      }
+             else{
+                   Toast.makeText(this@ArtDetailAcrivity,"ERROR",Toast.LENGTH_LONG).show()
+                }
+         }
     }
 
     fun buildSmallImg(img : Bitmap,maxSize:Int):Bitmap{
