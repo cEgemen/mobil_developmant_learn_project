@@ -21,6 +21,7 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.getSystemService
 import androidx.core.view.isVisible
+import androidx.core.widget.addTextChangedListener
 import androidx.lifecycle.ReportFragment.Companion.reportFragment
 import androidx.room.Room
 import androidx.room.Room.databaseBuilder
@@ -56,6 +57,8 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,GoogleMap.OnMapLong
     private lateinit var dao: PlaceDao;
     var markedLt:Double = 0.0 ;
     var markedLd : Double= 0.0 ;
+    var isNameDone = false;
+    var isMarketDone = false;
     private val composite : CompositeDisposable = CompositeDisposable()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -80,9 +83,19 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,GoogleMap.OnMapLong
         if(type == "new")
         {
              binding.deleteButton.visibility = View.GONE;
+             binding.saveButton.isEnabled = false;
+             binding.placeNameEditTextView.addTextChangedListener {
+                 val text = it.toString();
+                 if(text.isEmpty())
+                 {
+                     isNameDone = !isNameDone;
+                 }
+                 if(isMarketDone || isNameDone)
+                 {
+                      binding.saveButton.isEnabled = true;
+                 }
+             }
              binding.saveButton.setOnClickListener {
-
-
                  composite.add(
                      dao.insertPlace(Place(binding.placeNameEditTextView.text.toString(),markedLt,markedLd))
                          .subscribeOn(Schedulers.io())
@@ -148,6 +161,11 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,GoogleMap.OnMapLong
         mMap.addMarker(MarkerOptions().position(p0))
         markedLt = p0.latitude;
         markedLd = p0.longitude;
+        isMarketDone = true;
+        if(isNameDone || isMarketDone)
+        {
+            binding.saveButton.isEnabled = true;
+        }
     }
 
     fun registerLauncher(){
