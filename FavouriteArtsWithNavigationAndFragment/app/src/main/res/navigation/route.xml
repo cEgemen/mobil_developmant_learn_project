@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/route"
+    app:startDestination="@id/favouriArtsFragment">
+
+    <fragment
+        android:id="@+id/favouriArtsFragment"
+        android:name="com.lq.favouriteartswithnavigationandfragment.favouriArtsFragment"
+        android:label="fragment_favouri_arts"
+        tools:layout="@layout/fragment_favouri_arts" >
+        <action
+            android:id="@+id/action_favouriArtsFragment_to_detailArtFragment"
+            app:destination="@id/detailArtFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/detailArtFragment"
+        android:name="com.lq.favouriteartswithnavigationandfragment.detailArtFragment"
+        android:label="fragment_detail_art"
+        tools:layout="@layout/fragment_detail_art" >
+        <action
+            android:id="@+id/action_detailArtFragment_to_favouriArtsFragment"
+            app:destination="@id/favouriArtsFragment" />
+        <argument
+            android:name="type"
+            app:argType="string" />
+        <argument
+            android:name="art"
+            app:argType="com.lq.favouriteartswithnavigationandfragment.ArtModel"
+            app:nullable="true" />
+    </fragment>
+</navigation>
