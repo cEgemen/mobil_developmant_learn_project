@@ -21,6 +21,7 @@ android {
     }
     buildFeatures{
         viewBinding = true
+        dataBinding = true
     }
     buildTypes {
 
@@ -45,6 +46,7 @@ android {
 
 dependencies {
     val nav_version = "2.7.7"
+    val lifecycle_version = "2.7.0"
 
 
     implementation("androidx.core:core-ktx:1.13.0")
@@ -58,6 +60,18 @@ dependencies {
     implementation ( "androidx.navigation:navigation-fragment-ktx:$nav_version")
     implementation ("androidx.navigation:navigation-ui-ktx:$nav_version")
     implementation("androidx.swiperefreshlayout:swiperefreshlayout:1.2.0-alpha01")
+
+    // ViewModel
+    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycle_version")
+
+    implementation ("com.squareup.retrofit2:converter-gson:2.5.0")
+    implementation ("com.squareup.retrofit2:retrofit:2.5.0")
+
+    implementation ("com.squareup.retrofit2:adapter-rxjava2:2.4.0")
+    implementation ("io.reactivex.rxjava2:rxjava:2.2.4")
+    implementation ("io.reactivex.rxjava2:rxandroid:2.1.0")
+
+    implementation ("com.github.bumptech.glide:glide:4.16.0")
 
 
 }

@@ -6,9 +6,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.lq.countrys.R
+import com.lq.countrys.databinding.FragmentFeedBinding
 
 class SpecialCountry : Fragment() {
-
+      lateinit var  binding : FragmentFeedBinding ;
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -18,7 +19,8 @@ class SpecialCountry : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        return inflater.inflate(R.layout.fragment_special_country, container, false)
+        binding = FragmentFeedBinding.inflate(inflater);
+        return binding.root
     }
 
 }
