@@ -2,6 +2,8 @@ plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
     id("androidx.navigation.safeargs.kotlin")
+    id("kotlin-kapt")
+
 
 }
 
@@ -33,6 +35,9 @@ android {
             )
         }
     }
+
+
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_1_8
         targetCompatibility = JavaVersion.VERSION_1_8
@@ -47,7 +52,13 @@ android {
 dependencies {
     val nav_version = "2.7.7"
     val lifecycle_version = "2.7.0"
+    val room_version = "2.2.6"
 
+    implementation ("androidx.room:room-runtime:2.4.0-rc01")
+    kapt ("androidx.room:room-compiler:2.4.0-rc01")
+    //Coroutine
+    implementation ("androidx.room:room-ktx:2.4.0-rc01")
+    implementation ("androidx.lifecycle:lifecycle-runtime-ktx:2.4.0")
 
     implementation("androidx.core:core-ktx:1.13.0")
     implementation("androidx.appcompat:appcompat:1.6.1")

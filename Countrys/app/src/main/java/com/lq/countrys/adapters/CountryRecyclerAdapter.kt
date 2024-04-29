@@ -10,7 +10,7 @@ import com.lq.countrys.model.CountryModel
 import com.lq.countrys.utility.getImage
 import com.lq.countrys.view.FeedFragmentDirections
 
-class CountryRecyclerAdapter(var countryList : List<CountryModel>) : RecyclerView.Adapter<CountryRecyclerAdapter.CountryRecyclerAdapterViewHolder>(){
+class CountryRecyclerAdapter(private var countryList : List<CountryModel>) : RecyclerView.Adapter<CountryRecyclerAdapter.CountryRecyclerAdapterViewHolder>(){
 
      class CountryRecyclerAdapterViewHolder(val binding  : RecyclerLayoutBinding):RecyclerView.ViewHolder(binding.root){
 
@@ -32,7 +32,8 @@ class CountryRecyclerAdapter(var countryList : List<CountryModel>) : RecyclerVie
            holder.binding.recyclerName.text = countryList[position].countryName;
            holder.binding.recyclerRegion.text = countryList[position].countryRegion;
            holder.itemView.setOnClickListener {
-                 val action  = FeedFragmentDirections.actionFeedFragmentToSpecialCountry();
+               val id : Int = countryList[position].uuid;
+               val action  = FeedFragmentDirections.actionFeedFragmentToSpecialCountry(id = id);
                  Navigation.findNavController(it).navigate(action);
            }
           holder.binding.recyleImage.getImage(countryList[position].countryImg,holder.itemView.context);

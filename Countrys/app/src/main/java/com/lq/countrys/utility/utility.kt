@@ -5,7 +5,6 @@ import android.widget.ImageView
 import androidx.swiperefreshlayout.widget.CircularProgressDrawable
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
-import com.lq.countrys.R
 
 
 fun ImageView.getImage(url : String,context:Context)

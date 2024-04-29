@@ -1,5 +1,6 @@
 package com.lq.countrys.view
 
+import android.app.Application
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -20,7 +21,7 @@ class FeedFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        viewModel = FeedViewModel();
+        viewModel = FeedViewModel(Application());
     }
 
     override fun onCreateView(
@@ -37,9 +38,9 @@ class FeedFragment : Fragment() {
         binding.feedRefreshLayout.setOnRefreshListener {
               binding.feedRecyclerView.visibility = View.GONE;
             binding.feedTextError.visibility = View.GONE;
-            binding.feedProgressBar.visibility = View.VISIBLE
+            binding.feedProgressBar.visibility = View.VISIBLE;
             binding.feedRefreshLayout.isRefreshing = false;
-              viewModel.refData();
+              viewModel.refresh()
 
         }
         binding.feedRecyclerView.adapter = adapter;
